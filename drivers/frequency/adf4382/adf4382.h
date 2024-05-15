@@ -425,6 +425,9 @@
 /* ADF4382 REG0054 Map */
 #define ADF4382_ADC_ST_CNV_MSK			NO_OS_BIT(0)
 
+/* ADF4382 REG0058 Map */
+#define ADF4382_LOCKED_MSK					NO_OS_BIT(0)
+
 #define ADF4382_SPI_3W_CFG(x)			(no_os_field_prep(ADF4382_SDO_ACTIVE_MSK, x) | \
 						 no_os_field_prep(ADF4382_SDO_ACTIVE_R_MSK, x))
 #define ADF4382_BLEED_MSB_MSK			(ADF4382_COARSE_BLEED_MSK | \

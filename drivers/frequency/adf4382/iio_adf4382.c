@@ -302,7 +302,7 @@ static int adf4382_iio_write_cpi(void *dev, char *buf, uint32_t len,
 	struct adf4382_iio_dev *iio_adf4382 = (struct adf4382_iio_dev *)dev;
 	struct adf4382_dev *adf4382;
 	int32_t val[2];
-	uint8_t index;
+	int index;
 
 	if (!iio_adf4382)
 		return -EINVAL;

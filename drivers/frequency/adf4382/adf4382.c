@@ -122,7 +122,7 @@ int adf4382_spi_read(struct adf4382_dev *dev, uint16_t reg_addr, uint8_t *data)
 
 	ret = no_os_spi_write_and_read(dev->spi_desc, buff,
 				       ADF4382_BUFF_SIZE_BYTES);
-	if(ret)
+	if (ret)
 		return ret;
 
 	*data = buff[2];
@@ -165,8 +165,8 @@ int adf4382_spi_update_bits(struct adf4382_dev *dev, uint16_t reg_addr,
 int adf4382_reg_dump(struct adf4382_dev *dev)
 {
 	uint8_t val;
-	uint8_t ret;
 	uint16_t i;
+	int ret;
 
 	for(i = 0; i < 0x68; i++) {
 		ret = adf4382_spi_read(dev, i, &val);
@@ -176,7 +176,7 @@ int adf4382_reg_dump(struct adf4382_dev *dev)
 		pr_info("0x%X    0x%X\n", i, val);
 	}
 
-	for(i = 0x100; i < 0x112; i++) {
+	for (i = 0x100; i < 0x112; i++) {
 		ret = adf4382_spi_read(dev, i, &val);
 		if (ret)
 			return ret;
@@ -184,7 +184,7 @@ int adf4382_reg_dump(struct adf4382_dev *dev)
 		pr_info("0x%X    0x%X\n", i, val);
 	}
 
-	for(i = 0x200; i < 0x274; i++) {
+	for (i = 0x200; i < 0x274; i++) {
 		ret = adf4382_spi_read(dev, i, &val);
 		if (ret)
 			return ret;
@@ -210,10 +210,10 @@ int adf4382_set_ref_clk(struct adf4382_dev *dev, uint64_t val)
 
 	dev->ref_freq_hz = val;
 
-	if(val > ADF4382_REF_CLK_MAX)
+	if (val > ADF4382_REF_CLK_MAX)
 		dev->ref_freq_hz = ADF4382_REF_CLK_MAX;
 
-	if(val < ADF4382_REF_CLK_MIN)
+	if (val < ADF4382_REF_CLK_MIN)
 		dev->ref_freq_hz = ADF4382_REF_CLK_MIN;
 
 	return adf4382_set_freq(dev);
@@ -264,7 +264,7 @@ int adf4382_get_en_ref_doubler(struct adf4382_dev *dev, bool *en)
 {
 	uint8_t tmp;
 	int ret;
-	
+
 	ret = adf4382_spi_read(dev, 0x20, &tmp);
 	if (ret)
 		return ret;
@@ -289,7 +289,7 @@ int adf4382_set_ref_div(struct adf4382_dev *dev, int32_t div)
 
 	dev->ref_div = div;
 
-	if(div > ADF4382_REF_DIV_MAX)
+	if (div > ADF4382_REF_DIV_MAX)
 		dev->ref_div = ADF4382_REF_DIV_MAX;
 
 	return adf4382_set_freq(dev);
@@ -304,7 +304,7 @@ int adf4382_set_ref_div(struct adf4382_dev *dev, int32_t div)
 int adf4382_get_ref_div(struct adf4382_dev *dev, int32_t *div)
 {
 	uint8_t tmp;
-	uint8_t ret;
+	int ret;
 
 	ret = adf4382_spi_read(dev, 0x20, &tmp);
 	if (ret)
@@ -331,7 +331,7 @@ int adf4382_set_cp_i(struct adf4382_dev *dev, int32_t reg_val)
 
 	dev->cp_i = (uint8_t)reg_val;
 
-	if(reg_val > ADF4382_CPI_VAL_MAX)
+	if (reg_val > ADF4382_CPI_VAL_MAX)
 		dev->cp_i = ADF4382_CPI_VAL_MAX;
 
 	return adf4382_set_freq(dev);
@@ -348,7 +348,7 @@ int adf4382_set_cp_i(struct adf4382_dev *dev, int32_t reg_val)
 int adf4382_get_cp_i(struct adf4382_dev *dev, int32_t *reg_val)
 {
 	uint8_t tmp;
-	uint8_t ret;
+	int ret;
 
 	ret = adf4382_spi_read(dev, 0x1F, &tmp);
 	if (ret)
@@ -374,7 +374,7 @@ int adf4382_set_bleed_word(struct adf4382_dev *dev, int32_t word)
 
 	dev->bleed_word = (uint16_t)word;
 
-	if(word > ADF4382_BLEED_WORD_MAX)
+	if (word > ADF4382_BLEED_WORD_MAX)
 		dev->bleed_word = ADF4382_BLEED_WORD_MAX;
 
 	return adf4382_set_freq(dev);
@@ -399,7 +399,7 @@ int adf4382_get_bleed_word(struct adf4382_dev *dev, int32_t *word)
 	upper &= (ADF4382_COARSE_BLEED_MSK | ADF4382_FINE_BLEED_MSB_MSK);
 
 	ret = adf4382_spi_read(dev, 0x1D, &lower);
-	if(ret)
+	if (ret)
 		return ret;
 
 	dev->bleed_word = (upper << 8) | lower;
@@ -420,10 +420,10 @@ int adf4382_set_out_power(struct adf4382_dev *dev, uint8_t ch, int32_t pwr)
 {
 	uint8_t tmp;
 
-	if(pwr > ADF4382_OUT_PWR_MAX)
+	if (pwr > ADF4382_OUT_PWR_MAX)
 		pwr = ADF4382_OUT_PWR_MAX;
 
-	if(!ch) {
+	if (!ch) {
 		tmp = no_os_field_prep(ADF4382_CLK1_OPWR_MSK, pwr);
 		return adf4382_spi_update_bits(dev, 0x29, ADF4382_CLK1_OPWR_MSK,
 					       tmp);
@@ -450,7 +450,7 @@ int adf4382_get_out_power(struct adf4382_dev *dev, uint8_t ch, int32_t *pwr)
 	if (ret)
 		return ret;
 
-	if(!ch)
+	if (!ch)
 		*pwr = no_os_field_get(ADF4382_CLK1_OPWR_MSK, tmp);
 	else
 		*pwr = no_os_field_get(ADF4382_CLK2_OPWR_MSK, tmp);
@@ -471,7 +471,7 @@ int adf4382_set_en_chan(struct adf4382_dev *dev, uint8_t ch, bool en)
 {
 	uint8_t enable;
 
-	if(!ch) {
+	if (!ch) {
 		enable = no_os_field_prep(ADF4382_PD_CLKOUT1_MSK, !en);
 		return adf4382_spi_update_bits(dev, 0x2B,
 					       ADF4382_PD_CLKOUT1_MSK,
@@ -495,12 +495,12 @@ int adf4382_get_en_chan(struct adf4382_dev *dev, uint8_t ch, bool *en)
 	uint8_t tmp;
 	bool enable;
 	int ret;
-	
+
 	ret = adf4382_spi_read(dev, 0x2B, &tmp);
 	if (ret)
 		return ret;
 
-	if(!ch)
+	if (!ch)
 		enable = no_os_field_get(tmp, ADF4382_PD_CLKOUT1_MSK);
 	else
 		enable = no_os_field_get(tmp, ADF4382_PD_CLKOUT2_MSK);
@@ -561,10 +561,10 @@ int adf4382_set_rfout(struct adf4382_dev *dev, uint64_t val)
 
 	dev->freq= val;
 
-	if(val > dev->freq_max)
+	if (val > dev->freq_max)
 		dev->freq = dev->freq_max;
 
-	if(val < dev->freq_min)
+	if (val < dev->freq_min)
 		dev->freq = dev->freq_min;
 
 	return adf4382_set_freq(dev);
@@ -672,7 +672,7 @@ int adf4382_get_rfout(struct adf4382_dev *dev, uint64_t *val)
 	if  (ret)
 		return ret;
 	mod2 |= tmp;
-	
+
 	freq = frac2 * pfd;
 	freq = no_os_div_u64(freq, mod2);
 	freq = freq + (frac1 * pfd);
@@ -797,7 +797,7 @@ static int adf4382_pll_fract_n_compute(struct adf4382_dev *dev, uint64_t freq,
 	*frac2_word = 0;
 	*mod2_word = 0;
 
-	if(rem > 0)
+	if (rem > 0)
 		return adf4382_frac2_compute(dev, rem, pfd_freq, frac2_word,
 					     mod2_word);
 
@@ -820,6 +820,7 @@ int adf4382_set_freq(struct adf4382_dev *dev)
 	uint8_t ldwin_pw = 0;
 	uint8_t int_mode;
 	uint8_t en_bleed;
+	uint8_t locked;
 	uint16_t n_int;
 	uint8_t div1;
 	uint64_t tmp;
@@ -1051,7 +1052,18 @@ int adf4382_set_freq(struct adf4382_dev *dev)
 
 	// Need to set N_INT last to trigger an auto-calibration
 	val = n_int & ADF4382_N_INT_LSB_MSK;
-	return adf4382_spi_write(dev, 0x10, val);
+	ret = adf4382_spi_write(dev, 0x10, val);
+	if (ret)
+		return ret;
+
+	no_os_mdelay(100);
+	ret = adf4382_spi_read(dev, 0x58, &tmp);
+	if (ret)
+		return ret;
+	locked = no_os_field_get(tmp, ADF4382_LOCKED_MSK); // TODO: Fix check locked
+	// if(locked != 1)
+	// 	return
+	return 0;
 }
 
 /**
@@ -1074,15 +1086,15 @@ int adf4382_set_phase_adjust(struct adf4382_dev *dev, uint32_t phase_ps)
 	int ret;
 
 	ret = adf4382_spi_update_bits(dev, 0x1E, ADF4382_EN_PHASE_RESYNC_MSK, 0xff);
-	if(ret)
+	if (ret)
 		return ret;
 
 	ret = adf4382_spi_update_bits(dev, 0x1F, ADF4382_EN_BLEED_MSK, 0xff);
-	if(ret)
+	if (ret)
 		return ret;
 
 	ret = adf4382_spi_update_bits(dev, 0x32, ADF4382_DEL_MODE_MSK, 0x0);
-	if(ret)
+	if (ret)
 		return ret;
 
 	dev->phase_adj = phase_ps;
@@ -1096,13 +1108,13 @@ int adf4382_set_phase_adjust(struct adf4382_dev *dev, uint32_t phase_ps)
 	//Convert it to degrees/ps
 	phase_deg = no_os_div_u64(phase_deg_ns, NS_TO_PS);
 
-	if(phase_deg > 360) {
+	if (phase_deg > 360) {
 		pr_err("Phase Adjustment cannot exceed 360deg per Clock Period\n");
 		return EINVAL;
 	}
 
-	/*Phase adjustment can only be done if bleed is active, and a bleed
-	constant needs to be added*/
+	//Phase adjustment can only be done if bleed is active, and a bleed
+	//constant needs to be added
 	phase_bleed = phase_deg * ADF4382_PHASE_BLEED_CNST;
 	//The charge pump current will also need to be taken in to account
 	phase_ci = phase_bleed * adf4382_ci_ua[dev->cp_i];
@@ -1112,11 +1124,11 @@ int adf4382_set_phase_adjust(struct adf4382_dev *dev, uint32_t phase_ps)
 	pfd_freq = adf4382_pfd_compute(dev);
 	phase_reg_value = no_os_div_u64((phase_ci * pfd_freq), (360 * dev->freq));
 
-	if(phase_reg_value > 255)
+	if (phase_reg_value > 255)
 		phase_reg_value -= 255;
 
 	ret = adf4382_spi_write(dev, 0x33, phase_reg_value);
-	if(ret)
+	if (ret)
 		return ret;
 
 	return adf4382_spi_update_bits(dev, 0x34, ADF4382_PHASE_ADJ_MSK, 0xff);
@@ -1215,7 +1227,7 @@ int adf4382_init(struct adf4382_dev **dev,
 	device->ld_count = init_param->ld_count;
 	device->phase_adj = 0;
 
-	switch(init_param->id) {
+	switch (init_param->id) {
 	case ID_ADF4382:
 		device->freq_max = ADF4382_RFOUT_MAX;
 		device->freq_min = ADF4382_RFOUT_MIN;
@@ -1231,7 +1243,7 @@ int adf4382_init(struct adf4382_dev **dev,
 		device->clkout_div_reg_val_max = ADF4382A_CLKOUT_DIV_REG_VAL_MAX;
 		break;
 	default:
-		return -EINVAL;
+		goto error_spi;
 	}
 
 	ret = adf4382_spi_write(device, 0x00, ADF4382_RESET_CMD);
@@ -1275,7 +1287,6 @@ int adf4382_init(struct adf4382_dev **dev,
 	ret = adf4382_set_out_power(device, 1, 9);
 	if (ret)
 		goto error_spi;
-
 	*dev = device;
 
 	return ret;
@@ -1297,7 +1308,7 @@ int adf4382_remove(struct adf4382_dev *dev)
 
 	ret = no_os_spi_remove(dev->spi_desc);
 	if (ret)
-		return ret;
+		no_os_free(dev);
 
 	return 0;
 }
