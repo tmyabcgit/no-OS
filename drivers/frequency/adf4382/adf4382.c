@@ -1056,13 +1056,15 @@ int adf4382_set_freq(struct adf4382_dev *dev)
 	if (ret)
 		return ret;
 
-	no_os_mdelay(100);
-	ret = adf4382_spi_read(dev, 0x58, &tmp);
+	no_os_udelay(ADF4382_LKD_DELAY_US);
+	ret = adf4382_spi_read(dev, 0x58, &val);
 	if (ret)
 		return ret;
-	locked = no_os_field_get(tmp, ADF4382_LOCKED_MSK); // TODO: Fix check locked
-	// if(locked != 1)
-	// 	return
+
+	locked = no_os_field_get(val, ADF4382_LOCKED_MSK);
+	if (!locked)
+		return -EIO;
+
 	return 0;
 }
 

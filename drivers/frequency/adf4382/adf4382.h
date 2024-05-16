@@ -472,6 +472,7 @@
 #define ADF4382_VCO_CAL_VTUNE			124
 #define ADF4382_VCO_CAL_ALC			250
 #define ADF4382_POR_DELAY_US			200
+#define ADF4382_LKD_DELAY_US			500
 
 #define MHZ					MEGA
 #define S_TO_NS					NANO
