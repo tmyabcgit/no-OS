@@ -42,6 +42,7 @@
 #include "no_os_delay.h"
 #include "no_os_error.h"
 #include "no_os_print_log.h"
+#include "no_os_util.h"
 
 /* Charge pump current values expressed in uA */
 static const int adf4382_ci_ua[] = {
@@ -684,25 +685,6 @@ int adf4382_get_rfout(struct adf4382_dev *dev, uint64_t *val)
 }
 
 /**
- * @brief Computes the greatest common divider of two numbers.
- * @param x	- The first value for which to compute.
- * @param y	- The second value for which to compute.
- * @return 	- The gcd.
-*/
-static uint32_t greatest_common_divisor(uint32_t x, uint32_t y)
-{
-	uint32_t tmp;
-
-	while (y != 0) {
-		tmp = x % y;
-		x = y;
-		y = tmp;
-	}
-
-	return x;
-}
-
-/**
  * @brief Computes the second fractional part of the feedback divider if needed.
  * @param dev 	     - The device structure.
  * @param res 	     - Residue from the first fractional part.
@@ -744,7 +726,7 @@ static int adf4382_frac2_compute(struct adf4382_dev *dev, uint64_t res,
 	do {
 
 		chsp_freq = channel_spacing * ADF4382_MOD1WORD;
-		gcd = greatest_common_divisor(chsp_freq, pfd_freq);
+		gcd = no_os_greatest_common_divisor(chsp_freq, pfd_freq);
 		mod2_tmp = NO_OS_DIV_ROUND_UP(pfd_freq, gcd);
 
 		if (mod2_tmp > mod2_max) {
