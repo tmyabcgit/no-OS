@@ -11,3 +11,6 @@ include ../../tools/scripts/generic_variables.mk
 include src.mk
 
 include ../../tools/scripts/generic.mk
+
+LIB_FLAGS += -lm
+LDFLAGS += -Xlinker --defsym=_HEAP_SIZE=0x800000
