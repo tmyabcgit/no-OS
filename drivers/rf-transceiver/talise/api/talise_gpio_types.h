@@ -15,6 +15,8 @@
 extern "C" {
 #endif
 
+#include "talise_jesd204_types.h"
+
 /**
  *  \brief Enum to set the low voltage GPIO mode
  */
