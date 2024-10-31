@@ -223,7 +223,8 @@ static uint64_t adf4368_pfd_compute(struct adf4368_dev *dev)
  * @param dev 	     - The device structure.
  * @return 	     - 0 in case of success or negative error code.
  */
-static int adf4368_optimize_bleed_word(struct adf4368_dev *dev){
+static int adf4368_optimize_bleed_word(struct adf4368_dev *dev)
+{
 
 	uint32_t coars_bleed;
 	uint32_t fine_bleed;
@@ -238,66 +239,58 @@ static int adf4368_optimize_bleed_word(struct adf4368_dev *dev){
 	pfd_freq = adf4368_pfd_compute(dev);
 
 	/* t_bleed and bleed_pol LUT */
-	if(pfd_freq >= 120000000UL){
+	if(pfd_freq >= 120000000UL) {
 		/* 4.2GHz > RFout */
-		if(dev->freq > 4200000000UL)
-		{
+		if(dev->freq > 4200000000UL) {
 			t_bleed = 390;
 			bleed_pol = false;
 		}
 		/* 4.2GHz < RFout < 3GHz */
-		else if(dev->freq > 3000000000UL)
-		{
+		else if(dev->freq > 3000000000UL) {
 			t_bleed = 900;
 			bleed_pol = false;
 		}
 		/* 3GHz < RFout < 1.8GHz */
-		else if(dev->freq > 1800000000UL) 
-		{
+		else if(dev->freq > 1800000000UL) {
 			t_bleed = 1200;
 			bleed_pol = false;
 		}
 		/* dev->freq < 1.8 GHz */
-		else{
+		else {
 			t_bleed = 1400;
 			bleed_pol = false;
 		}
-	}
-	else{
+	} else {
 
-		if(dev->freq > 4200000000UL)
-		{
+		if(dev->freq > 4200000000UL) {
 			t_bleed = 390;
 			bleed_pol = false;
 		}
 		/* 4.2GHz < RFout < 3GHz */
-		else if(dev->freq > 3000000000UL)
-		{
-			t_bleed = dev->n_int < ADF4368_BLEED_N_INT_TH ? 
-								900 : 1200;
-			bleed_pol = dev->n_int < ADF4368_BLEED_N_INT_TH ? 
-								false : true;
+		else if(dev->freq > 3000000000UL) {
+			t_bleed = dev->n_int < ADF4368_BLEED_N_INT_TH ?
+				  900 : 1200;
+			bleed_pol = dev->n_int < ADF4368_BLEED_N_INT_TH ?
+				    false : true;
 		}
 		/* 3GHz < RFout < 1.8GHz */
-		else if(dev->freq > 1800000000UL) 
-		{
+		else if(dev->freq > 1800000000UL) {
 			t_bleed = 1200;
-			bleed_pol = dev->n_int < ADF4368_BLEED_N_INT_TH ? 
-								true : false;
+			bleed_pol = dev->n_int < ADF4368_BLEED_N_INT_TH ?
+				    true : false;
 		}
 		/* 1.8GHz < RFout < 1.2GHz */
-		else if(dev->freq > 1200000000UL) 
-		{
+		else if(dev->freq > 1200000000UL) {
 			t_bleed = 1400;
-			bleed_pol = dev->n_int < ADF4368_BLEED_N_INT_TH ? 
-								true : false;
+			bleed_pol = dev->n_int < ADF4368_BLEED_N_INT_TH ?
+				    true : false;
 		}
 		/* dev->freq < 1.2 GHz */
-		else{
-			t_bleed = dev->n_int < ADF4368_BLEED_N_INT_TH ? 
-								2000 : 1400;
-			bleed_pol = dev->n_int < ADF4368_BLEED_N_INT_TH ? 
-								true : false;
+		else {
+			t_bleed = dev->n_int < ADF4368_BLEED_N_INT_TH ?
+				  2000 : 1400;
+			bleed_pol = dev->n_int < ADF4368_BLEED_N_INT_TH ?
+				    true : false;
 		}
 
 	}
@@ -305,24 +298,24 @@ static int adf4368_optimize_bleed_word(struct adf4368_dev *dev){
 	/* Calculate Bleed Current */
 	bleed_i = t_bleed * (pfd_freq * adf4368_ci_ua[dev->cp_i]);
 
-	bleed_i = NO_OS_DIV_ROUND_UP(bleed_i, PS_TO_S); 
+	bleed_i = NO_OS_DIV_ROUND_UP(bleed_i, PS_TO_S);
 
 	coars_bleed = no_os_div64_u64_rem(bleed_i, ADF4368_COARSE_BLEED_CNST, &rem);
 
 	fine_bleed = rem * ADF4368_FINE_BLEED_CNST2;
 	fine_bleed = NO_OS_DIV_ROUND_UP(fine_bleed, ADF4368_FINE_BLEED_CNST1);
 
-	dev->bleed_word =  (coars_bleed << 9) | fine_bleed; 
+	dev->bleed_word =  (coars_bleed << 9) | fine_bleed;
 
-	
+
 	/* Set Bleed Pol */
 	ret =  adf4368_spi_update_bits(dev, 0x1F,
-			ADF4368_BLEED_POL_MSK,
-			no_os_field_prep(ADF4368_BLEED_POL_MSK, bleed_pol));
+				       ADF4368_BLEED_POL_MSK,
+				       no_os_field_prep(ADF4368_BLEED_POL_MSK, bleed_pol));
 	if (ret)
 		return ret;
 
-	
+
 	val = dev->bleed_word & ADF4368_FINE_BLEED_LSB_MSK;
 	ret = adf4368_spi_write(dev, 0x1D, val);
 	if (ret)
@@ -408,8 +401,9 @@ static int adf4368_frac2_compute(struct adf4368_dev *dev, uint64_t res,
  * @param bleed_pol 	- The bleed current pol.
  * @return 	     - Calculated new bleed word value.
  */
-static int32_t adf4368_compute_bleed_word(struct adf4368_dev *dev, 
-						uint32_t phase_fs, bool bleed_pol){
+static int32_t adf4368_compute_bleed_word(struct adf4368_dev *dev,
+		uint32_t phase_fs, bool bleed_pol)
+{
 
 	int32_t delta_coarse_b;
 	int32_t new_bleed_word;
@@ -435,29 +429,29 @@ static int32_t adf4368_compute_bleed_word(struct adf4368_dev *dev,
 	// fA / 10^6 = nA
 	phase_tmp = no_os_div_u64(phase_tmp, MEGA);
 
-	// delta_coarse_bleed = nA / (uA*10^3)  
-	delta_coarse_b = no_os_div64_u64_rem(phase_tmp, 
-					ADF4368_COARSE_BLEED_CNST*KILO, &rem);
+	// delta_coarse_bleed = nA / (uA*10^3)
+	delta_coarse_b = no_os_div64_u64_rem(phase_tmp,
+					     ADF4368_COARSE_BLEED_CNST*KILO, &rem);
 
 	delta_coarse_b = bleed_pol ? -delta_coarse_b : delta_coarse_b;
 
-	// delta_fine_bleed = nA / (nA)  
+	// delta_fine_bleed = nA / (nA)
 	delta_fine_b = no_os_div_u64(rem, ADF4368_FINE_BLEED_CNST3);
 	delta_fine_b = bleed_pol ? -delta_fine_b : delta_fine_b;
 
 	// Update the bleed word with new fine bleed value
-	new_bleed_word = (dev->bleed_word & ((ADF4368_FINE_BLEED_MSB_MSK << 8) | 
-				ADF4368_FINE_BLEED_LSB_MSK)) + delta_fine_b;
+	new_bleed_word = (dev->bleed_word & ((ADF4368_FINE_BLEED_MSB_MSK << 8) |
+					     ADF4368_FINE_BLEED_LSB_MSK)) + delta_fine_b;
 
 	// fine bleed overflow adjustment
-	if(new_bleed_word > 0x1FF){
-		new_bleed_word -= ((ADF4368_COARSE_BLEED_CNST * KILO) / 
-							ADF4368_FINE_BLEED_CNST3);
+	if(new_bleed_word > 0x1FF) {
+		new_bleed_word -= ((ADF4368_COARSE_BLEED_CNST * KILO) /
+				   ADF4368_FINE_BLEED_CNST3);
 		delta_coarse_b++;
-	}else if(new_bleed_word < 0){
+	} else if(new_bleed_word < 0) {
 
-		new_bleed_word += ((ADF4368_COARSE_BLEED_CNST * KILO) / 
-							ADF4368_FINE_BLEED_CNST3);
+		new_bleed_word += ((ADF4368_COARSE_BLEED_CNST * KILO) /
+				   ADF4368_FINE_BLEED_CNST3);
 		delta_coarse_b--;
 	}
 
@@ -482,7 +476,7 @@ static int adf4368_optimize_ldwin(struct adf4368_dev *dev)
 
 	//Calculates the PFD freq. the output will be in KHz
 	pfd_freq = adf4368_pfd_compute(dev);
-	
+
 	/* Calculate LD window */
 	tmp = NO_OS_DIV_ROUND_UP(pfd_freq, MICROAMPER_PER_AMPER);
 	tmp *= adf4368_ci_ua[dev->cp_i];
@@ -493,11 +487,11 @@ static int adf4368_optimize_ldwin(struct adf4368_dev *dev)
 		ldwin_pw = 1;
 
 	ret = adf4368_spi_update_bits(dev, 0x2C, ADF4368_LDWIN_PW_MSK,
-					no_os_field_prep(ADF4368_LDWIN_PW_MSK,
-							ldwin_pw));
+				      no_os_field_prep(ADF4368_LDWIN_PW_MSK,
+						      ldwin_pw));
 	if (ret)
 		return ret;
-	
+
 
 	return 0;
 }
@@ -573,7 +567,7 @@ int adf4368_set_en_chan(struct adf4368_dev *dev, uint8_t ch, bool en)
 
 	if (!dev)
 		return -EINVAL;
-		
+
 	if (!ch) {
 		enable = no_os_field_prep(ADF4368_PD_CLKOUT1_MSK, !en);
 		return adf4368_spi_update_bits(dev, 0x2B,
@@ -786,18 +780,17 @@ int adf4368_set_cp_i(struct adf4368_dev *dev, int32_t reg_val)
 	if (ret)
 		return ret;
 	int_mode = no_os_field_get(ADF4368_INT_MODE_MSK, tmp);
-	
-	if(en_bleed){ 
-		if(int_mode){
+
+	if(en_bleed) {
+		if(int_mode) {
 			ret = adf4368_optimize_ldwin(dev);
 			if (ret)
 				return ret;
-			}
-		else{
+		} else {
 			ret = adf4368_optimize_bleed_word(dev);
 			if (ret)
-				return ret;	
-			}
+				return ret;
+		}
 	}
 
 	// Need to set N_INT last to write Double Buffered Registers
@@ -868,18 +861,18 @@ int adf4368_set_bleed_word(struct adf4368_dev *dev, int32_t word)
 						      val));
 	if (ret)
 		return ret;
-	
+
 	/* Read Int Mode */
 	ret = adf4368_spi_read(dev, 0x11, &tmp);
 	if (ret)
 		return ret;
 	int_mode = no_os_field_get(ADF4368_INT_MODE_MSK, tmp);
 
-	if(int_mode){
+	if(int_mode) {
 
 		/* Enable Bleed */
-		ret = adf4368_spi_update_bits(dev, 0x1F, 
-						ADF4368_EN_BLEED_MSK,0xff);
+		ret = adf4368_spi_update_bits(dev, 0x1F,
+					      ADF4368_EN_BLEED_MSK,0xff);
 		if (ret)
 			return ret;
 
@@ -1053,7 +1046,7 @@ int adf4368_get_rfout(struct adf4368_dev *dev, uint64_t *val)
 }
 
 /**
- * @brief Set EZSYNC and Timed SYNC features' initial state. Waits for SW_SYNC 
+ * @brief Set EZSYNC and Timed SYNC features' initial state. Waits for SW_SYNC
  * toggle or SYNC pin.
  * @param dev 		- The device structure.
  * @param en	 	- The enable or disable SYNC feature.
@@ -1069,61 +1062,57 @@ int adf4368_set_sync_setup(struct adf4368_dev *dev, bool en)
 	if (!dev)
 		return -EINVAL;
 
-	if(en){
+	if(en) {
 
 		ret = adf4368_spi_update_bits(dev, 0x2A, ADF4368_PD_SYNC, 0);
 		if(ret)
 			return ret;
 
 		ret = adf4368_spi_update_bits(dev, 0x53,
-						ADF4368_SYNC_SEL_MSK, 0xff);
+					      ADF4368_SYNC_SEL_MSK, 0xff);
 		if(ret)
 			return ret;
 
 		ret = adf4368_spi_update_bits(dev, 0x1E,
-				(ADF4368_EN_REF_RST_MSK | ADF4368_TIMED_SYNC_MSK 
-				| ADF4368_EN_PHASE_RESYNC_MSK), 0xff);
+					      (ADF4368_EN_REF_RST_MSK | ADF4368_TIMED_SYNC_MSK
+					       | ADF4368_EN_PHASE_RESYNC_MSK), 0xff);
 		if(ret)
 			return ret;
 
 		ret = adf4368_spi_update_bits(dev, 0x2D,
-						ADF4368_EN_DRCLK_MSK, 0xff);
+					      ADF4368_EN_DRCLK_MSK, 0xff);
 		if(ret)
 			return ret;
 
-		// Determine the Digital Delays 
+		// Determine the Digital Delays
 		pfd_freq = adf4368_pfd_compute(dev);
-		if(pfd_freq >= 200*MHZ){
+		if(pfd_freq >= 200*MHZ) {
 			delay = 3;
-		}
-		else if(pfd_freq >= 175*MHZ){
+		} else if(pfd_freq >= 175*MHZ) {
 			delay = 4;
-		}
-		else if(pfd_freq < 175*MHZ){
+		} else if(pfd_freq < 175*MHZ) {
 			delay = 7;
 		}
 
-		if(pfd_freq < 70*MHZ && dev->n_int >= ADF4368_BLEED_N_INT_TH){
+		if(pfd_freq < 70*MHZ && dev->n_int >= ADF4368_BLEED_N_INT_TH) {
 			delay = 0;
 		}
-	
+
 		ret = adf4368_spi_update_bits(dev, 0x31,
-				ADF4368_SYNC_DEL_MSK, 
-				no_os_field_prep(ADF4368_SYNC_DEL_MSK, delay));
+					      ADF4368_SYNC_DEL_MSK,
+					      no_os_field_prep(ADF4368_SYNC_DEL_MSK, delay));
 		if(ret)
 			return ret;
 
 		val = no_os_field_prep(ADF4368_DRCLK_DEL_MSK, delay) |
-	      			no_os_field_prep(ADF4368_DNCLK_DEL_MSK, delay);
+		      no_os_field_prep(ADF4368_DNCLK_DEL_MSK, delay);
 		ret = adf4368_spi_update_bits(dev, 0x30,
-				ADF4368_DRCLK_DEL_MSK | ADF4368_DNCLK_DEL_MSK, val);
+					      ADF4368_DRCLK_DEL_MSK | ADF4368_DNCLK_DEL_MSK, val);
 
 		if(ret)
 			return ret;
 
-	}
-	else
-	{
+	} else {
 		/* Power Down SYNC */
 		ret = adf4368_spi_update_bits(dev, 0x2A, ADF4368_PD_SYNC, 0xff);
 	}
@@ -1157,7 +1146,7 @@ int adf4368_get_sync_setup(struct adf4368_dev *dev, bool *en)
 }
 
 /**
- * @brief Set Software SYNC Request. Setting SW_SYNC resets the RF block. 
+ * @brief Set Software SYNC Request. Setting SW_SYNC resets the RF block.
  * Clearing SW_SYNC makes ready for a new reference clock.
  * @param dev 		- The device structure.
  * @return    		- 0 in case of success or negative error code.
@@ -1197,8 +1186,8 @@ int adf4368_get_sw_sync(struct adf4368_dev *dev, uint8_t *sw_sync)
 
 
 /**
- * @brief Set Temperature Readback feature's initial state. 
- * This feature should be disabled after reading temperature. 
+ * @brief Set Temperature Readback feature's initial state.
+ * This feature should be disabled after reading temperature.
  * @param dev 		- The device structure.
  * @param en	 	- The enable or disable Temperature readback feature.
  * @return    		- 0 in case of success or negative error code.
@@ -1209,29 +1198,27 @@ int adf4368_set_temperature(struct adf4368_dev *dev, bool en)
 
 	if (!dev)
 		return -EINVAL;
-		
-	if(en){
+
+	if(en) {
 
 		ret = adf4368_spi_update_bits(dev, 0x2D,
-						ADF4368_EN_DRCLK_MSK, 0xff);
+					      ADF4368_EN_DRCLK_MSK, 0xff);
 		if(ret)
 			return ret;
 
 		ret = adf4368_spi_update_bits(dev, 0x31,
-						ADF4368_EN_ADC_CLK_MSK, 0xff);
+					      ADF4368_EN_ADC_CLK_MSK, 0xff);
 		if(ret)
 			return ret;
 		ret = adf4368_spi_update_bits(dev, 0x54,
-						ADF4368_ADC_ST_CNV_MSK, 0xff);
+					      ADF4368_ADC_ST_CNV_MSK, 0xff);
 		if(ret)
 			return ret;
 
 
-	}
-	else
-	{
+	} else {
 		ret = adf4368_spi_update_bits(dev, 0x54,
-						ADF4368_ADC_ST_CNV_MSK, 0x0);
+					      ADF4368_ADC_ST_CNV_MSK, 0x0);
 		if(ret)
 			return ret;
 	}
@@ -1240,7 +1227,7 @@ int adf4368_set_temperature(struct adf4368_dev *dev, bool en)
 }
 
 /**
- * @brief Gets the value of the approximate die temperature. 
+ * @brief Gets the value of the approximate die temperature.
  * @param dev 		- The device structure.
  * @param temp		- The read value of the Temperature Readback.
  * @return    		- 0 in case of success or negative error code.
@@ -1274,7 +1261,7 @@ int adf4368_get_temperature(struct adf4368_dev *dev, int32_t *temp)
 
 /**
  * @brief Set the phase adjustment in femto-seconds with Sigma Delta Modulation.
- *  This approach only support MAX %22 in degree phase. 
+ *  This approach only support MAX %22 in degree phase.
  *  Recommend to use in fractional mode.
  * @param dev 		- The device structure.
  * @param phase_fs 	- The phase adjustment in femto-seconds.
@@ -1288,7 +1275,7 @@ int adf4368_set_phase_sdm(struct adf4368_dev *dev, uint32_t phase_fs)
 	uint64_t phase_ns;
 	uint64_t phase_s;
 	int ret;
-	
+
 	if (!dev)
 		return -EINVAL;
 
@@ -1311,7 +1298,7 @@ int adf4368_set_phase_sdm(struct adf4368_dev *dev, uint32_t phase_fs)
 	if (ret)
 		return ret;
 
-	// Toggle PHSAE_ADJ 
+	// Toggle PHSAE_ADJ
 	ret = adf4368_spi_update_bits(dev, 0x1F, ADF4368_PHASE_ADJ_MSK, 0xff);
 	if(ret)
 		return ret;
@@ -1334,7 +1321,7 @@ int adf4368_get_phase_sdm(struct adf4368_dev *dev, uint32_t *phase_fs)
 	uint64_t phase_tmp;
 	uint8_t tmp;
 	int ret;
-	
+
 	if (!dev)
 		return -EINVAL;
 
@@ -1347,7 +1334,7 @@ int adf4368_get_phase_sdm(struct adf4368_dev *dev, uint32_t *phase_fs)
 	phase_tmp = rfout_mhz * ADF4368_SIGMA_DELTA_MOD_CNST;
 
 	phase_tmp = no_os_div_u64(US_TO_FS, phase_tmp);
-	
+
 	*phase_fs = phase_tmp * tmp;
 
 	return 0;
@@ -1361,8 +1348,8 @@ int adf4368_get_phase_sdm(struct adf4368_dev *dev, uint32_t *phase_fs)
  * @param phase_pol 	- The phase adjustment value's sign.
  * @return    		- 0 in case of success, negative error code otherwise.
  */
-int adf4368_set_phase_bleedi(struct adf4368_dev *dev, uint32_t phase_fs, 
-								bool phase_pol)
+int adf4368_set_phase_bleedi(struct adf4368_dev *dev, uint32_t phase_fs,
+			     bool phase_pol)
 {
 	int32_t new_bleed_word;
 	uint64_t rfout_period;
@@ -1404,20 +1391,19 @@ int adf4368_set_phase_bleedi(struct adf4368_dev *dev, uint32_t phase_fs,
 	new_bleed_word = adf4368_compute_bleed_word(dev, phase_fs, !phase_pol);
 
 	// Decrease or increase bleed word with period of RF-out
-	if (new_bleed_word > ADF4368_BLEED_WORD_MAX){
+	if (new_bleed_word > ADF4368_BLEED_WORD_MAX) {
 
 		dev->bleed_word = new_bleed_word;
 		tmp = no_os_div_u64(dev->freq, MICRO);
-		rfout_period =  no_os_div_u64(US_TO_FS, tmp); 
+		rfout_period =  no_os_div_u64(US_TO_FS, tmp);
 		new_bleed_word = adf4368_compute_bleed_word(dev, rfout_period, true);
 
-	}
-	else if (new_bleed_word < 0){
+	} else if (new_bleed_word < 0) {
 		dev->bleed_word = new_bleed_word;
 		tmp = no_os_div_u64(dev->freq, MICRO);
-		rfout_period =  no_os_div_u64(US_TO_FS, tmp); 
-		new_bleed_word = adf4368_compute_bleed_word(dev, rfout_period, 
-									false);
+		rfout_period =  no_os_div_u64(US_TO_FS, tmp);
+		new_bleed_word = adf4368_compute_bleed_word(dev, rfout_period,
+				 false);
 	}
 
 	dev->bleed_word = new_bleed_word;
@@ -1443,14 +1429,15 @@ int adf4368_set_phase_bleedi(struct adf4368_dev *dev, uint32_t phase_fs,
 }
 
 /**
- * @brief Set the phase adjustment in femto-seconds. Function choose the phase 
+ * @brief Set the phase adjustment in femto-seconds. Function choose the phase
  * adjustment method according to Integer mode.
  * @param dev 		- The device structure.
  * @param phase_ps 	- The phase adjustment in femto-seconds.
  * @param phase_pol 	- The phase adjustment value's sign.
  * @return    		- 0 in case of success, negative error code otherwise.
  */
-int adf4368_set_phase(struct adf4368_dev *dev, uint32_t phase_fs, bool phase_pol)
+int adf4368_set_phase(struct adf4368_dev *dev, uint32_t phase_fs,
+		      bool phase_pol)
 {
 	uint8_t int_mode;
 	uint8_t tmp;
@@ -1465,11 +1452,11 @@ int adf4368_set_phase(struct adf4368_dev *dev, uint32_t phase_fs, bool phase_pol
 		return ret;
 	int_mode = no_os_field_get(ADF4368_INT_MODE_MSK, tmp);
 
-	if(int_mode){
+	if(int_mode) {
 		ret = adf4368_set_phase_bleedi(dev, phase_fs, phase_pol);
 		if (ret)
 			return ret;
-	}else{
+	} else {
 		// Only Positive Phase
 		if(phase_pol)
 			return -EINVAL;
@@ -1482,14 +1469,15 @@ int adf4368_set_phase(struct adf4368_dev *dev, uint32_t phase_fs, bool phase_pol
 }
 
 /**
- * @brief Get the phase adjustment in femto-seconds. Function choose the phase 
+ * @brief Get the phase adjustment in femto-seconds. Function choose the phase
  * adjustment method according to Integer mode.
  * @param dev 		- The device structure.
  * @param phase_ps 	- The phase adjustment in femto-seconds.
  * @param phase_pol 	- The phase adjustment value's sign.
  * @return    		- 0 in case of success, negative error code otherwise.
  */
-int adf4368_get_phase(struct adf4368_dev *dev, uint32_t *phase_fs, bool *phase_pol)
+int adf4368_get_phase(struct adf4368_dev *dev, uint32_t *phase_fs,
+		      bool *phase_pol)
 {
 	uint8_t int_mode;
 	uint8_t tmp;
@@ -1504,11 +1492,11 @@ int adf4368_get_phase(struct adf4368_dev *dev, uint32_t *phase_fs, bool *phase_p
 		return ret;
 	int_mode = no_os_field_get(ADF4368_INT_MODE_MSK, tmp);
 
-	if(int_mode){
+	if(int_mode) {
 		*phase_fs = dev->phase_adj;
 		*phase_pol = dev->phase_pol;
 
-	}else{
+	} else {
 		ret = adf4368_get_phase_sdm(dev, phase_fs);
 		*phase_pol = false;
 		if(ret)
@@ -1518,8 +1506,8 @@ int adf4368_get_phase(struct adf4368_dev *dev, uint32_t *phase_fs, bool *phase_p
 	return 0;
 }
 
-/** 
- * @brief Applys a softreset, sets the SPI 4 wire mode and 
+/**
+ * @brief Applys a softreset, sets the SPI 4 wire mode and
  * writes the default registers.
  * @param dev 		- The device structure
  * @param spi_4wire 	- SPI 4 wire feature enable input
@@ -1557,9 +1545,10 @@ int adf4368_set_default_regs(struct adf4368_dev *dev, bool spi_4wire)
 /**
  * @brief Reads and Checks the registers values equal to default values.
  * @param 	- The device structure
- * @param 	- return value 
+ * @param 	- return value
  */
-int adf4368_get_default_regs(struct adf4368_dev *dev, bool *check){
+int adf4368_get_default_regs(struct adf4368_dev *dev, bool *check)
+{
 
 	uint8_t tmp;
 	uint8_t i;
@@ -1574,8 +1563,8 @@ int adf4368_get_default_regs(struct adf4368_dev *dev, bool *check){
 		ret = adf4368_spi_read(dev, adf4368_reg_defaults[i].reg, &tmp);
 		if (ret)
 			return ret;
-			
-		if(tmp != adf4368_reg_defaults[i].val){
+
+		if(tmp != adf4368_reg_defaults[i].val) {
 			*check = false;
 			return 0;
 		}
@@ -1611,7 +1600,7 @@ int adf4368_set_freq(struct adf4368_dev *dev)
 	uint8_t val;
 
 	int ret;
-	
+
 	if (!dev)
 		return -EINVAL;
 
@@ -1624,8 +1613,8 @@ int adf4368_set_freq(struct adf4368_dev *dev)
 	if (ret)
 		return ret;
 
-	for (clkout_div = 0; clkout_div <= dev->clkout_div_reg_val_max; 
-			clkout_div++) {
+	for (clkout_div = 0; clkout_div <= dev->clkout_div_reg_val_max;
+	     clkout_div++) {
 		tmp = (1 << clkout_div) * dev->freq;
 		if (tmp < dev->vco_min || tmp > dev->vco_max )
 			continue;
@@ -1653,16 +1642,16 @@ int adf4368_set_freq(struct adf4368_dev *dev)
 	dev->n_int = n_int;
 
 	/* Calculate Frac1 value */
-	if(rem){
+	if(rem) {
 		res = rem * ADF4368_MOD1WORD;
 		frac1_word = (uint32_t)no_os_div64_u64_rem(res, pfd_freq, &rem);
 
 		/* Calculate Frac2 and Mod2 values */
-		if (rem > 0){
-			ret = adf4368_frac2_compute(dev, rem, pfd_freq, 
-					&frac2_word, &mod2_word);
+		if (rem > 0) {
+			ret = adf4368_frac2_compute(dev, rem, pfd_freq,
+						    &frac2_word, &mod2_word);
 			if (ret)
-				return ret;				 
+				return ret;
 		}
 	}
 
@@ -1794,32 +1783,32 @@ int adf4368_set_freq(struct adf4368_dev *dev)
 
 	ret = adf4368_spi_update_bits(dev, 0x35, ADF4368_EN_ADC_CLK_MSK, 0xff);
 	if (ret)
-		return ret;	
+		return ret;
 
 	/* Calculate ADC CLK Div */
 	tmp = NO_OS_DIV_ROUND_UP(no_os_div_u64(pfd_freq, div1 * 400000) - 2, 4);
 	tmp = no_os_clamp(tmp, 0U, 255U);
 	tmp &= ADF4368_ADC_CLK_DIV_MSK;
 	ret = adf4368_spi_write(dev, 0x3E, tmp);
-	
+
 	if (ret)
 		return ret;
 
 	// Set LD COUNT
 	ret = adf4368_spi_update_bits(dev, 0x2C, ADF4368_LD_COUNT_MSK,
-				      				dev->ld_count);
+				      dev->ld_count);
 	if (ret)
 		return ret;
 
 	ret = adf4368_spi_update_bits(dev, 0x2C, ADF4368_LDWIN_PW_MSK,
 				      no_os_field_prep(ADF4368_LDWIN_PW_MSK,
-						      		ldwin_pw));
+						      ldwin_pw));
 	if (ret)
 		return ret;
 
 	ret = adf4368_spi_update_bits(dev, 0x11, ADF4368_CLKOUT_DIV_MSK,
 				      no_os_field_prep(ADF4368_CLKOUT_DIV_MSK,
-						      		clkout_div));
+						      clkout_div));
 	if (ret)
 		return ret;
 
@@ -1893,37 +1882,37 @@ int adf4368_init(struct adf4368_dev **dev,
 		goto error_spi;
 
 	ret = adf4368_spi_write(device, 0x3D,
-				no_os_field_prep(ADF4368_CMOS_OV_MSK, 
-								device->cmos_3v3));
+				no_os_field_prep(ADF4368_CMOS_OV_MSK,
+						device->cmos_3v3));
 	if (ret)
 		goto error_spi;
 
 	ret = adf4368_set_freq(device);
-	if (ret){
+	if (ret) {
 		pr_info("adf4368_set_freq %d\n",ret);
 		goto error_spi;
 	}
 
 	ret = adf4368_set_en_chan(device, 0, en);
-	if (ret){
+	if (ret) {
 		pr_info("adf4368_set_en_chan %d\n",ret);
 		goto error_spi;
 	}
 
 	ret = adf4368_set_en_chan(device, 1, en);
-	if (ret){
+	if (ret) {
 		pr_info("adf4368_set_en_chan %d\n",ret);
 		goto error_spi;
 	}
 
 	ret = adf4368_set_out_power(device, 0, 9);
-	if (ret){
+	if (ret) {
 		pr_info("adf4368_set_out_power %d\n",ret);
 		goto error_spi;
 	}
-		
+
 	ret = adf4368_set_out_power(device, 1, 9);
-	if (ret){
+	if (ret) {
 		pr_info("adf4368_set_out_power %d\n",ret);
 		goto error_spi;
 	}

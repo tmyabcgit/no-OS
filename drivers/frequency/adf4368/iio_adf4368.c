@@ -190,8 +190,8 @@ static int adf4368_iio_write_freq(void *dev, char *buf, uint32_t len,
  * 		    otherwise.
  */
 static int adf4368_iio_read_ref_freq(void *dev, char *buf, uint32_t len,
-				  const struct iio_ch_info *channel,
-				  intptr_t priv)
+				     const struct iio_ch_info *channel,
+				     intptr_t priv)
 {
 	struct adf4368_iio_dev *iio_adf4368 = (struct adf4368_iio_dev *)dev;
 	struct adf4368_dev *adf4368;
@@ -224,8 +224,8 @@ static int adf4368_iio_read_ref_freq(void *dev, char *buf, uint32_t len,
  * @return 	  - Result of the writing procedure, error code otherwise.
  */
 static int adf4368_iio_write_ref_freq(void *dev, char *buf, uint32_t len,
-				   const struct iio_ch_info *channel,
-				   intptr_t priv)
+				      const struct iio_ch_info *channel,
+				      intptr_t priv)
 {
 	struct adf4368_iio_dev *iio_adf4368 = (struct adf4368_iio_dev *)dev;
 	struct adf4368_dev *adf4368;
@@ -328,8 +328,8 @@ static int adf4368_iio_write_cpi(void *dev, char *buf, uint32_t len,
  * 		    otherwise.
  */
 static int adf4368_iio_read_bleed_i(void *dev, char *buf, uint32_t len,
-			       const struct iio_ch_info *channel,
-			       intptr_t priv)
+				    const struct iio_ch_info *channel,
+				    intptr_t priv)
 {
 	struct adf4368_iio_dev *iio_adf4368 = (struct adf4368_iio_dev *)dev;
 	struct adf4368_dev *adf4368;
@@ -352,7 +352,7 @@ static int adf4368_iio_read_bleed_i(void *dev, char *buf, uint32_t len,
 }
 
 /**
- * @brief Handles the write request for the bleed current attribute. 
+ * @brief Handles the write request for the bleed current attribute.
  * @param dev     - The iio device structure.
  * @param buf	  - Command buffer to be filled with the data to be written.
  * @param len     - Length of the received command buffer in bytes.
@@ -361,8 +361,8 @@ static int adf4368_iio_read_bleed_i(void *dev, char *buf, uint32_t len,
  * @return 	  - Result of the writing procedure, error code otherwise.
  */
 static int adf4368_iio_write_bleed_i(void *dev, char *buf, uint32_t len,
-				const struct iio_ch_info *channel,
-				intptr_t priv)
+				     const struct iio_ch_info *channel,
+				     intptr_t priv)
 {
 	struct adf4368_iio_dev *iio_adf4368 = (struct adf4368_iio_dev *)dev;
 	struct adf4368_dev *adf4368;
@@ -392,8 +392,8 @@ static int adf4368_iio_write_bleed_i(void *dev, char *buf, uint32_t len,
  * 		    otherwise.
  */
 static int adf4368_iio_read_rdoubler(void *dev, char *buf, uint32_t len,
-				    const struct iio_ch_info *channel,
-				    intptr_t priv)
+				     const struct iio_ch_info *channel,
+				     intptr_t priv)
 {
 	struct adf4368_iio_dev *iio_adf4368 = (struct adf4368_iio_dev *)dev;
 	struct adf4368_dev *adf4368;
@@ -421,7 +421,7 @@ static int adf4368_iio_read_rdoubler(void *dev, char *buf, uint32_t len,
  * @brief Handles the write request for the reference doubler attribute.When
  * 	  writing this attribute, set frequency function needs to be executed
  * 	  again.
- * 	  
+ *
  * @param dev     - The iio device structure.
  * @param buf	  - Command buffer to be filled with the data to be written.
  * @param len     - Length of the received command buffer in bytes.
@@ -430,8 +430,8 @@ static int adf4368_iio_read_rdoubler(void *dev, char *buf, uint32_t len,
  * @return 	  - Result of the writing procedure, error code otherwise.
  */
 static int adf4368_iio_write_rdoubler(void *dev, char *buf, uint32_t len,
-				     const struct iio_ch_info *channel,
-				     intptr_t priv)
+				      const struct iio_ch_info *channel,
+				      intptr_t priv)
 {
 	struct adf4368_iio_dev *iio_adf4368 = (struct adf4368_iio_dev *)dev;
 	struct adf4368_dev *adf4368;
@@ -461,8 +461,8 @@ static int adf4368_iio_write_rdoubler(void *dev, char *buf, uint32_t len,
  * 		    otherwise.
  */
 static int adf4368_iio_read_rdivider(void *dev, char *buf, uint32_t len,
-				    const struct iio_ch_info *channel,
-				    intptr_t priv)
+				     const struct iio_ch_info *channel,
+				     intptr_t priv)
 {
 	struct adf4368_iio_dev *iio_adf4368 = (struct adf4368_iio_dev *)dev;
 	struct adf4368_dev *adf4368;
@@ -496,8 +496,8 @@ static int adf4368_iio_read_rdivider(void *dev, char *buf, uint32_t len,
  * @return 	  - Result of the writing procedure, error code otherwise.
  */
 static int adf4368_iio_write_rdivider(void *dev, char *buf, uint32_t len,
-				     const struct iio_ch_info *channel,
-				     intptr_t priv)
+				      const struct iio_ch_info *channel,
+				      intptr_t priv)
 {
 	struct adf4368_iio_dev *iio_adf4368 = (struct adf4368_iio_dev *)dev;
 	struct adf4368_dev *adf4368;
@@ -617,7 +617,7 @@ static int adf4368_iio_read_en(void *dev, char *buf, uint32_t len,
 }
 
 /**
- * @brief Handles the write request for the channel enable attribute. 
+ * @brief Handles the write request for the channel enable attribute.
  * @param dev     - The iio device structure.
  * @param buf	  - Command buffer to be filled with the data to be written.
  * @param len     - Length of the received command buffer in bytes.
@@ -657,8 +657,8 @@ static int adf4368_iio_write_en(void *dev, char *buf, uint32_t len,
  * 		    otherwise.
  */
 static int adf4368_iio_read_sync_setup(void *dev, char *buf, uint32_t len,
-			       const struct iio_ch_info *channel,
-			       intptr_t priv)
+				       const struct iio_ch_info *channel,
+				       intptr_t priv)
 {
 	struct adf4368_iio_dev *iio_adf4368 = (struct adf4368_iio_dev *)dev;
 	struct adf4368_dev *adf4368;
@@ -683,7 +683,7 @@ static int adf4368_iio_read_sync_setup(void *dev, char *buf, uint32_t len,
 }
 
 /**
- * @brief Handles the write request for the SYNC features' initial state attribute. 
+ * @brief Handles the write request for the SYNC features' initial state attribute.
  * @param dev     - The iio device structure.
  * @param buf	  - Command buffer to be filled with the data to be written.
  * @param len     - Length of the received command buffer in bytes.
@@ -692,8 +692,8 @@ static int adf4368_iio_read_sync_setup(void *dev, char *buf, uint32_t len,
  * @return 	  - Result of the writing procedure, error code otherwise.
  */
 static int adf4368_iio_write_sync_setup(void *dev, char *buf, uint32_t len,
-				const struct iio_ch_info *channel,
-				intptr_t priv)
+					const struct iio_ch_info *channel,
+					intptr_t priv)
 {
 	struct adf4368_iio_dev *iio_adf4368 = (struct adf4368_iio_dev *)dev;
 	struct adf4368_dev *adf4368;
@@ -723,8 +723,8 @@ static int adf4368_iio_write_sync_setup(void *dev, char *buf, uint32_t len,
  * 		    otherwise.
  */
 static int adf4368_iio_read_sw_sync(void *dev, char *buf, uint32_t len,
-			       const struct iio_ch_info *channel,
-			       intptr_t priv)
+				    const struct iio_ch_info *channel,
+				    intptr_t priv)
 {
 	struct adf4368_iio_dev *iio_adf4368 = (struct adf4368_iio_dev *)dev;
 	struct adf4368_dev *adf4368;
@@ -749,7 +749,7 @@ static int adf4368_iio_read_sw_sync(void *dev, char *buf, uint32_t len,
 }
 
 /**
- * @brief Handles the write request for the set sw_sync attribute. 
+ * @brief Handles the write request for the set sw_sync attribute.
  * @param dev     - The iio device structure.
  * @param buf	  - Command buffer to be filled with the data to be written.
  * @param len     - Length of the received command buffer in bytes.
@@ -758,8 +758,8 @@ static int adf4368_iio_read_sw_sync(void *dev, char *buf, uint32_t len,
  * @return 	  - Result of the writing procedure, error code otherwise.
  */
 static int adf4368_iio_write_sw_sync(void *dev, char *buf, uint32_t len,
-				const struct iio_ch_info *channel,
-				intptr_t priv)
+				     const struct iio_ch_info *channel,
+				     intptr_t priv)
 {
 	struct adf4368_iio_dev *iio_adf4368 = (struct adf4368_iio_dev *)dev;
 	struct adf4368_dev *adf4368;
@@ -832,8 +832,8 @@ static int adf4368_iio_cpi_available(void *dev, char *buf, uint32_t len,
  * 		    otherwise.
  */
 static int adf4368_iio_read_default_regs(void *dev, char *buf, uint32_t len,
-				    const struct iio_ch_info *channel,
-				    intptr_t priv)
+		const struct iio_ch_info *channel,
+		intptr_t priv)
 {
 	struct adf4368_iio_dev *iio_adf4368 = (struct adf4368_iio_dev *)dev;
 	struct adf4368_dev *adf4368;
@@ -858,7 +858,7 @@ static int adf4368_iio_read_default_regs(void *dev, char *buf, uint32_t len,
 }
 
 /**
- * @brief Handles the write request for the setting default registers settings 
+ * @brief Handles the write request for the setting default registers settings
  * with SPI 4 Wire Mode.
  * @param dev     - The iio device structure.
  * @param buf	  - Command buffer to be filled with the data to be written.
@@ -868,8 +868,8 @@ static int adf4368_iio_read_default_regs(void *dev, char *buf, uint32_t len,
  * @return 	  - Result of the writing procedure, error code otherwise.
  */
 static int adf4368_iio_write_default_regs(void *dev, char *buf, uint32_t len,
-				     const struct iio_ch_info *channel,
-				     intptr_t priv)
+		const struct iio_ch_info *channel,
+		intptr_t priv)
 {
 	struct adf4368_iio_dev *iio_adf4368 = (struct adf4368_iio_dev *)dev;
 	struct adf4368_dev *adf4368;
@@ -899,8 +899,8 @@ static int adf4368_iio_write_default_regs(void *dev, char *buf, uint32_t len,
  * 		    otherwise.
  */
 static int adf4368_iio_read_temperature(void *dev, char *buf, uint32_t len,
-			       const struct iio_ch_info *channel,
-			       intptr_t priv)
+					const struct iio_ch_info *channel,
+					intptr_t priv)
 {
 	struct adf4368_iio_dev *iio_adf4368 = (struct adf4368_iio_dev *)dev;
 	struct adf4368_dev *adf4368;
@@ -925,7 +925,7 @@ static int adf4368_iio_read_temperature(void *dev, char *buf, uint32_t len,
 }
 
 /**
- * @brief Handles the write request for the Temperature Readback Setup attribute. 
+ * @brief Handles the write request for the Temperature Readback Setup attribute.
  * @param dev     - The iio device structure.
  * @param buf	  - Command buffer to be filled with the data to be written.
  * @param len     - Length of the received command buffer in bytes.
@@ -934,8 +934,8 @@ static int adf4368_iio_read_temperature(void *dev, char *buf, uint32_t len,
  * @return 	  - Result of the writing procedure, error code otherwise.
  */
 static int adf4368_iio_write_temperature(void *dev, char *buf, uint32_t len,
-				const struct iio_ch_info *channel,
-				intptr_t priv)
+		const struct iio_ch_info *channel,
+		intptr_t priv)
 {
 	struct adf4368_iio_dev *iio_adf4368 = (struct adf4368_iio_dev *)dev;
 	struct adf4368_dev *adf4368;
@@ -965,8 +965,8 @@ static int adf4368_iio_write_temperature(void *dev, char *buf, uint32_t len,
  * 		    otherwise.
  */
 static int adf4368_iio_read_phase(void *dev, char *buf, uint32_t len,
-			       const struct iio_ch_info *channel,
-			       intptr_t priv)
+				  const struct iio_ch_info *channel,
+				  intptr_t priv)
 {
 	struct adf4368_iio_dev *iio_adf4368 = (struct adf4368_iio_dev *)dev;
 	struct adf4368_dev *adf4368;
@@ -992,7 +992,7 @@ static int adf4368_iio_read_phase(void *dev, char *buf, uint32_t len,
 }
 
 /**
- * @brief Handles the write request for the phase adjustment attribute. 
+ * @brief Handles the write request for the phase adjustment attribute.
  * @param dev     - The iio device structure.
  * @param buf	  - Command buffer to be filled with the data to be written.
  * @param len     - Length of the received command buffer in bytes.
@@ -1001,8 +1001,8 @@ static int adf4368_iio_read_phase(void *dev, char *buf, uint32_t len,
  * @return 	  - Result of the writing procedure, error code otherwise.
  */
 static int adf4368_iio_write_phase(void *dev, char *buf, uint32_t len,
-				const struct iio_ch_info *channel,
-				intptr_t priv)
+				   const struct iio_ch_info *channel,
+				   intptr_t priv)
 {
 	struct adf4368_iio_dev *iio_adf4368 = (struct adf4368_iio_dev *)dev;
 	struct adf4368_dev *adf4368;
@@ -1021,7 +1021,7 @@ static int adf4368_iio_write_phase(void *dev, char *buf, uint32_t len,
 	phase_pol = val < 0 ? true : false;
 
 	val = abs(val);
-	
+
 	return adf4368_set_phase(adf4368, val, phase_pol);
 
 }

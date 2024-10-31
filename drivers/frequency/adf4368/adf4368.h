@@ -495,7 +495,7 @@ static const struct reg_sequence adf4368_reg_defaults[] = {
 	{ 0x040, 0x00 },
 	{ 0x03f, 0x83 },
 	{ 0x03e, 0x26 },
-    	{ 0x03d, 0xC0 },
+	{ 0x03d, 0xC0 },
 	{ 0x03c, 0x00 },
 	{ 0x03b, 0x8C },
 	{ 0x03a, 0x00 },
@@ -513,7 +513,7 @@ static const struct reg_sequence adf4368_reg_defaults[] = {
 	{ 0x02e, 0x00 },
 	{ 0x02d, 0xF1 },
 	{ 0x02c, 0x4C },
-	{ 0x02b, 0x03 }, 
+	{ 0x02b, 0x03 },
 	{ 0x02a, 0x10 },
 	{ 0x029, 0xDD },
 	{ 0x028, 0x20 },
@@ -629,14 +629,16 @@ int adf4368_set_phase_sdm(struct adf4368_dev *dev, uint32_t phase_fs);
 int adf4368_get_phase_sdm(struct adf4368_dev *dev, uint32_t *phase_fs);
 
 /** ADF4368 Set phase adjust in int mode attribute */
-int adf4368_set_phase_bleedi(struct adf4368_dev *dev, uint32_t phase_fs, 
-				bool phase_pol);
+int adf4368_set_phase_bleedi(struct adf4368_dev *dev, uint32_t phase_fs,
+			     bool phase_pol);
 
 /** ADF4368 Set phase adjustment value */
-int adf4368_set_phase(struct adf4368_dev *dev, uint32_t phase_fs, bool phase_pol);
+int adf4368_set_phase(struct adf4368_dev *dev, uint32_t phase_fs,
+		      bool phase_pol);
 
 /** ADF4368 Get phase adjustment value */
-int adf4368_get_phase(struct adf4368_dev *dev, uint32_t *phase_fs, bool *phase_pol);
+int adf4368_get_phase(struct adf4368_dev *dev, uint32_t *phase_fs,
+		      bool *phase_pol);
 
 /** ADF4368 Set default registers and SPI 4 Wire mode */
 int adf4368_set_default_regs(struct adf4368_dev *dev, bool spi_4wire);
