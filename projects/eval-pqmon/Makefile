@@ -4,6 +4,9 @@ IIOD=y
 HEAP_SIZE=0x80000
 STACK_SIZE=0x20000
 
+# CFLAGS += -DPQM_CONN_USB
+CFLAGS += -DPQM_CONN_SERIAL
+
 ifndef PQLIB_PATH
 $(error 'No PQM library path defined')
 endif
@@ -11,7 +14,7 @@ endif
 include ../../tools/scripts/generic_variables.mk
 
 CFLAGS_MFLOAT_TYPE=soft
-CFLAGS += -DNO_OS_USB_UART
+# CFLAGS += -DNO_OS_USB_UART
 CFLAGS += -DIIO_IGNORE_BUFF_OVERRUN_ERR
 CFLAGS += -DNO_OS_LWIP_INIT_ONETIME=1
 

@@ -41,7 +41,8 @@
 /********************** Macros and Constants Definitions **********************/
 /******************************************************************************/
 
-struct no_os_uart_init_param iio_demo_uart_ip = {
+#if defined(PQM_CONN_USB)
+struct no_os_uart_init_param iio_demo_usb_ip = {
 	.device_id = UART_DEVICE_ID,
 	.irq_id = UART_IRQ_ID,
 	.asynchronous_rx = true,
@@ -51,7 +52,20 @@ struct no_os_uart_init_param iio_demo_uart_ip = {
 	.stop = NO_OS_UART_STOP_1_BIT,
 	.extra = UART_EXTRA,
 	.platform_ops = &max_usb_uart_ops,
-}; // UART initialization parameter for iio connection
+}; // USB initialization parameter for iio connection
+#elif defined(PQM_CONN_SERIAL)
+struct no_os_uart_init_param iio_demo_serial_ip = {
+	.device_id = UART_DEVICE_ID,
+	.irq_id = UART_IRQ_ID,
+	.asynchronous_rx = true,
+	.baud_rate = UART_BAUDRATE,
+	.size = NO_OS_UART_CS_8,
+	.parity = NO_OS_UART_PAR_NO,
+	.stop = NO_OS_UART_STOP_1_BIT,
+	.extra = UART_EXTRA,
+	.platform_ops = &max_uart_ops,
+}; // SERIAL initialization parameter for iio connection
+#endif
 
 IIO_BUFF_TYPE iio_data_buffer_loc[MAX_SIZE_BASE_ADDR] = {0};
 

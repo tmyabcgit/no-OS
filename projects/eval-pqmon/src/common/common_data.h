@@ -71,7 +71,13 @@
 #define MAX_EVENT_NUMBER 6
 
 extern IIO_BUFF_TYPE iio_data_buffer_loc[MAX_SIZE_BASE_ADDR];
-extern struct no_os_uart_init_param iio_demo_uart_ip;
+
+#if defined(PQM_CONN_USB)
+extern struct no_os_uart_init_param iio_demo_usb_ip;
+#elif defined(PQM_CONN_SERIAL)
+extern struct no_os_uart_init_param iio_demo_serial_ip;
+#endif
+
 extern struct pqm_init_para pqm_ip;
 extern struct no_os_spi_init_param spi_egy_ip;
 extern struct no_os_i2c_init_param i2c_ip;

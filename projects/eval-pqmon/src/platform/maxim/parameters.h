@@ -56,8 +56,13 @@
 #define UART_BAUDRATE 115200
 #define UART_IRQ_ID USB_IRQn
 #define UART_OPS &max_usb_uart_ops
-#define UART_EXTRA &iio_demo_usb_uart_extra_ip
 
+#if defined(PQM_CONN_USB)
+#define UART_EXTRA &iio_demo_usb_uart_extra_ip
+#elif defined(PQM_CONN_SERIAL)
+#define UART_EXTRA &uart_stdio_extra_ip
+
+#endif
 #define SPI_CS 0
 #define SPI_DEVICE_ID 2
 #define SPI_BAUDRATE 15000000

@@ -101,6 +101,34 @@ int32_t close_pqm_channels(void *dev)
 	return 0;
 }
 
+#if defined(PQM_CONN_SERIAL)
+int32_t enable_RS482_driver()
+{
+	// Enable driver and receiver of ADM2587, used only by serial connection
+	int status;
+	struct no_os_gpio_sec *enable_ADM2587;
+	struct nhd_c12832a1z_dev *nhd_c12832a1z_device;
+
+	struct max_gpio_init_param gpio_extra_ip_ADM2587 = {
+		.vssel = MXC_GPIO_VSSEL_VDDIOH,
+	};
+
+	struct no_os_gpio_init_param gpio_ADM2587_ip = {
+		.port = 2,
+		.number = 15,
+		.pull = NO_OS_PULL_NONE,
+		.platform_ops = &max_gpio_ops,
+		.extra = &gpio_extra_ip_ADM2587,
+	};
+
+	status = no_os_gpio_get(&enable_ADM2587, &gpio_ADM2587_ip);
+	if (status)
+		return status;
+	status = no_os_gpio_set_value(enable_ADM2587, 1);
+	return status;
+}
+#endif
+
 int basic_pqm_firmware()
 {
 
@@ -127,6 +155,12 @@ int basic_pqm_firmware()
 		goto exit;
 
 	no_os_uart_stdio(uart_desc);
+
+#if defined(PQM_CONN_SERIAL)
+	status = enable_RS482_driver();
+	if (status)
+		goto exit;
+#endif
 
 	status = afe_init();
 	if (status != SYS_STATUS_SUCCESS) {
@@ -159,7 +193,13 @@ int basic_pqm_firmware()
 
 	app_init_param.devices = devices;
 	app_init_param.nb_devices = NO_OS_ARRAY_SIZE(devices);
-	app_init_param.uart_init_params = iio_demo_uart_ip;
+
+#if defined(PQM_CONN_USB)
+	app_init_param.uart_init_params = iio_demo_usb_ip;
+#elif defined(PQM_CONN_SERIAL)
+	app_init_param.uart_init_params = iio_demo_serial_ip;
+#endif
+
 	app_init_param.post_step_callback = &(pqm_one_cycle);
 	status = iio_app_init(&app, app_init_param);
 
