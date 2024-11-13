@@ -53,7 +53,7 @@ struct no_os_uart_init_param iio_demo_usb_ip = {
 	.extra = UART_EXTRA,
 	.platform_ops = &max_usb_uart_ops,
 }; // USB initialization parameter for iio connection
-#elif defined(PQM_CONN_SERIAL)
+#elif defined(PQM_CONN_SERIAL) || defined(PQM_CONN_T1L)
 struct no_os_uart_init_param iio_demo_serial_ip = {
 	.device_id = UART_DEVICE_ID,
 	.irq_id = UART_IRQ_ID,

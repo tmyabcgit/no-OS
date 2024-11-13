@@ -129,6 +129,119 @@ int32_t enable_RS482_driver()
 }
 #endif
 
+#if defined(PQM_CONN_T1L)
+int32_t setup_t1l_connection()
+{
+	int ret;
+	uint8_t adin1110_mac_address[6] = {0x00, 0x18, 0x80, 0x03, 0x25, 0x60};
+	const struct no_os_gpio_init_param adin1110_int_ip = {
+		.port = 2,
+		.number = 6,
+		.pull = NO_OS_PULL_UP,
+		.platform_ops = &max_gpio_ops,
+		.extra = GPIO_EXTRA,
+	};
+
+	const struct no_os_gpio_init_param adin1110_rst_gpio_ip = {
+		.port = 2,
+		.number = 1,
+		.pull = NO_OS_PULL_UP,
+		.platform_ops = &max_gpio_ops,
+		.extra = GPIO_EXTRA,
+	};
+
+	const struct no_os_gpio_init_param adin1110_swpd_ip = {
+		.port = 2,
+		.number = 25,
+		.pull = NO_OS_PULL_UP,
+		.platform_ops = &max_gpio_ops,
+		.extra = GPIO_EXTRA,
+	};
+
+	const struct no_os_gpio_init_param adin1110_tx2p4_ip = {
+		.port = 2,
+		.number = 10,
+		.pull = NO_OS_PULL_DOWN,
+		.platform_ops = &max_gpio_ops,
+		.extra = GPIO_EXTRA,
+	};
+
+	const struct no_os_gpio_init_param adin1110_mssel_ip = {
+		.port = 2,
+		.number = 9,
+		.pull = NO_OS_PULL_NONE,
+		.platform_ops = &max_gpio_ops,
+		.extra = GPIO_EXTRA,
+	};
+
+	const struct no_os_gpio_init_param adin1110_cfg0_ip = {
+		.port = 2,
+		.number = 3,
+		.pull = NO_OS_PULL_NONE,
+		.platform_ops = &max_gpio_ops,
+		.extra = GPIO_EXTRA,
+	};
+
+	const struct no_os_gpio_init_param adin1110_cfg1_ip = {
+		.port = 2,
+		.number = 0,
+		.pull = NO_OS_PULL_UP,
+		.platform_ops = &max_gpio_ops,
+		.extra = GPIO_EXTRA,
+	};
+	const struct no_os_spi_init_param adin1110_spi_ip = {
+		.device_id = 2,
+		.max_speed_hz = 15000000,
+		.bit_order = NO_OS_SPI_BIT_ORDER_MSB_FIRST,
+		.mode = NO_OS_SPI_MODE_0,
+		.platform_ops = SPI_OPS,
+		.chip_select = 0,
+		.extra = ADIN_SPI_EXTRA,
+	};
+	struct adin1110_init_param adin1110_ip = {
+		.chip_type = ADIN1110,
+		.comm_param = adin1110_spi_ip,
+		.reset_param = adin1110_rst_gpio_ip,
+		.append_crc = false,
+	};
+	struct lwip_network_param lwip_ip = {
+		.platform_ops = &adin1110_lwip_ops,
+		.mac_param = &adin1110_ip,
+	};
+	struct lwip_network_desc *lwip_desc;
+
+	struct no_os_gpio_desc *adin1110_swpd_gpio;
+	struct no_os_gpio_desc *adin1110_tx2p4_gpio;
+	struct no_os_gpio_desc *adin1110_mssel_gpio;
+	struct no_os_gpio_desc *adin1110_cfg0_gpio;
+	struct no_os_gpio_desc *adin1110_cfg1_gpio;
+	struct no_os_gpio_desc *adin1110_int_gpio;
+
+	no_os_gpio_get(&adin1110_cfg0_gpio, &adin1110_cfg0_ip);
+	no_os_gpio_get(&adin1110_swpd_gpio, &adin1110_swpd_ip);
+	no_os_gpio_get(&adin1110_tx2p4_gpio, &adin1110_tx2p4_ip);
+	no_os_gpio_get(&adin1110_mssel_gpio, &adin1110_mssel_ip);
+	no_os_gpio_get(&adin1110_cfg1_gpio, &adin1110_cfg1_ip);
+	no_os_gpio_get(&adin1110_int_gpio, &adin1110_int_ip);
+	no_os_gpio_direction_output(adin1110_swpd_gpio, 1);
+	no_os_gpio_direction_output(adin1110_tx2p4_gpio, 0);
+	no_os_gpio_direction_output(adin1110_mssel_gpio, 1);
+	no_os_gpio_direction_output(adin1110_cfg1_gpio, 1);
+	no_os_gpio_direction_output(adin1110_cfg0_gpio, 1);
+	no_os_gpio_direction_input(adin1110_int_gpio);
+
+	memcpy(adin1110_ip.mac_address, adin1110_mac_address, NETIF_MAX_HWADDR_LEN);
+	memcpy(lwip_ip.hwaddr, adin1110_mac_address, NETIF_MAX_HWADDR_LEN);
+
+	ret = no_os_lwip_init(&lwip_desc, &lwip_ip);
+	if (ret) {
+		return ret;
+	}
+
+
+}
+#endif
+
 int basic_pqm_firmware()
 {
 
@@ -198,6 +311,11 @@ int basic_pqm_firmware()
 	app_init_param.uart_init_params = iio_demo_usb_ip;
 #elif defined(PQM_CONN_SERIAL)
 	app_init_param.uart_init_params = iio_demo_serial_ip;
+#elif defined(PQM_CONN_T1L)
+	app_init_param.uart_init_params = iio_demo_serial_ip;
+	app_init_param.lwip_param.platform_ops = &adin1110_lwip_ops;
+	app_init_param.lwip_param.mac_param = &adin1110_ip;
+	app_init_param.lwip_param.extra = NULL;
 #endif
 
 	app_init_param.post_step_callback = &(pqm_one_cycle);
