@@ -838,7 +838,7 @@ static int adf4368_iio_read_default_regs(void *dev, char *buf, uint32_t len,
 	struct adf4368_iio_dev *iio_adf4368 = (struct adf4368_iio_dev *)dev;
 	struct adf4368_dev *adf4368;
 	int32_t val = -EINVAL;
-	uint8_t check;
+	bool check;
 	int ret;
 
 	if (!iio_adf4368)
